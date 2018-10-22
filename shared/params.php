@@ -1,0 +1,7 @@
+<?php
+	
+	define('BASE_URL', 		'');				// URL OF THE CLIENT PAGE
+	define('BASE_FOLDER', 		'../images_received/');		// FOLDER WHERE THE IMAGES ARE STORED -- SHOULD BE A COMPLICATED SECRET LINK
+	define('SECRET', 		'');				// ALLOW TO AUTHENTICATE THAT THE LINK COMES FROM THIS SERVER
+	define('CLICKATELL_APIKEY', 	'');
+?>
