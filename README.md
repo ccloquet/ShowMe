@@ -1,7 +1,7 @@
 # showme
 Let a citizen send a picture to the 112 dispatching, on invitation
 
-Quick and dirty (really...)
+Quick and dirty (really...), with a bit of security
 
 1. The dispatcher sends a link by SMS to the caller.
 2. The caller clicks on the link and take a picture.
