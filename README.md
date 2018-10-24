@@ -8,3 +8,5 @@ Quick and dirty (really...), with a bit of security
 3. The picture is sent to the server.
 4. The server validates the data received (image and key).
 5. The dispatcher refresh the page and see the pictures in reverse chronolocical order
+
+If you are looking for a more complete solution for dispatchings, a project like Geoloc18_112 might be worth trying
