@@ -23,11 +23,11 @@ If you are looking for a more complete solution for dispatchings, a project like
 
 - Each organization gets a userid
 - The user opens https://***/received/index.html?userid=USERID
-- This queries the API returning a key
+- This queries the API (query.php), which returns a key
 - This key is composed of a timestamp, a random hash and a validation hash
 - The validation hash takes into account the timestamp, the random hash and a user-related secret
 
-- When someone uploads a picture, it must send the key
+- When someone uploads a picture (upload.php), it must send the key
 - The key is validated against the secret
 - The image can only be uploaded if the key is less than 6 hours old
 
