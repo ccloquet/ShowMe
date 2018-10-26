@@ -1,0 +1,142 @@
+ <!DOCTYPE html>
+<html style='background:#dadada;'>
+<head>
+<title>Poppy Show Me</title>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,height=device-height,initial-scale=1.0,maximum-scale=1.0, viewport-fit=cover'>
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+<style>
+	body { background: #dadada; font-family: 'Lucida Sans', Helvetica, Arial, 'Lucida Grande', sans-serif; font-weight: 400; font-size: 24px; line-height: 18px; padding: 0; margin: 0; text-align: center;}
+	@media only screen and (max-width: 700px) { .wrap { padding: 15px; } }
+	h1 { text-align: center; margin: 40px 0; font-size: 22px; font-weight: bold; color: #666; }
+	.hover_red:hover{background:#948282; color:white}
+</style>
+</head>
+<body>
+<br><br><b>POPPY SHOW-ME</b> - DEMO ONLY - NOT FOR REAL USE<br><br>
+<div id='send_link' style='background:darkgray; margin:1em'>
+<br>Send the <a class='hover_red' id='link_for_caller' href=''>link</a> to the caller:<br><br>
+<b>GSM</b> (eg : 32123456789): <input style='font-size:24px;padding-left:.5em' type='number' id='to' /> &nbsp; <span class='hover_red' id='ok_btn'  style='border:1px solid black; padding:3px 9px; font-weight:bold; font-family:Lucida Sans'; font-size:24px;>OK</span><span id="sending" style="visibility:hidden">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><span id="sent" style="visibility:hidden">&nbsp;<i class="fa fa-check"></i></span>
+<br><br>
+</div>
+<h1>Photos received<br><br></h1>
+
+<div id='images'></div>
+
+<center style='font-size:12px'>info@my-poppy.eu & GitHub project contributors - <a href='https://github.com/ccloquet/showme'>github.com/ccloquet/showme</a> - MIT Licence</center>
+</body>
+</html>
+
+<script	src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+<script>
+	var url 	= new URL(document.URL);
+	var userid 	= url.searchParams.get("userid");
+
+	var key, base_url, old_html
+
+	function init()
+	{
+		$.post(
+		'query.php', 
+		{
+			action:	'init',
+			userid:	userid					 
+		},						
+		function(e)					
+		{
+			if (e.key == '') 
+			{
+				return false;
+			}
+			else
+			{
+				if (!validate_key(e.key))			return false;
+				key 	 = e.key				 
+				base_url = e.base_url					// add validation... or configure it elsewhere
+											// https://showme.my-poppy.eu/html/index.html
+
+				$('#link_for_caller').attr('href', base_url + "?key=" + key)
+
+				load_data()
+				setInterval(load_data, 10000)				// would best be events, not polling ... Eg. using PubNub	
+			}
+		}, 
+		'json') 
+	}
+
+	function validate_key(key)
+	{
+		if (key.length > 512)			return false
+		if (! /^[a-z0-9_/]+$/i.test(key))	return false
+
+		return true
+	}
+	function sending_show()
+	{
+		$('#sent').css('visibility', 'hidden')
+		$('#sending').css('visibility', '')
+	}
+
+	function sending_hide()
+	{
+		$('#sending').css('visibility', 'hidden')
+		$('#sent').css('visibility', '')
+	}
+
+	function send_sms()
+	{
+		sending_show()
+		$.post(
+		'send_sms.php', 
+		{
+			key:	key, 
+			to:	$('#to').val(),
+			userid:	userid			
+		},
+		function()
+		{
+			$('#to').val('')
+			sending_hide()
+		})									// add error management...
+	}
+
+	function load_data()
+	{
+		$.post(
+		'query.php', 
+		{
+			action:	'get_images',
+			userid:	userid
+		},
+		function(e)				 
+		{
+			var html = ''
+			for(var i=0; i<e.length; ++i)
+			{
+				var ts 	= new Date(parseInt(e[i].dt*1000)).toLocaleString() 
+ 
+				if (!validate_key(e[i].src.substr(0, e[i].src.length-4))) 	continue
+				if (e[i].src.substr(e[i].src.length-4) != '.jpg')		continue
+
+				var src = e[i].src					
+
+				html += "<div style='font-size:18px; margin-bottom:1em'>" +ts + "</div>";
+				html += "<img style='width:600px' src='"+src+"'/><br><br>";
+			}
+			if (html != old_html)
+			{
+				$('#images').html(html)		
+			}
+			old_html = html
+		},
+		'json') 
+	}
+
+	$('#ok_btn').on('click', send_sms)
+	init()
+	
+	
+</script>
