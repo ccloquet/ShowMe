@@ -1,6 +1,8 @@
 # showme
 Let a citizen send a picture to the 112 dispatching, on invitation - Lightweight solution
 
+Kinda photowall, for emergency services
+
 Proof of concept, quick and dirty (really...), with a bit of security
 
 1. The dispatcher connects to the interface of its organization
