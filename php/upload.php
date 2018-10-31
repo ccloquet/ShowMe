@@ -1,4 +1,4 @@
-<?php
+  <?php
     require_once('../includes.php');
 
     if (!isset($_GET['key'])) {
@@ -66,3 +66,4 @@
         die('OK');
     }
 ?>
+
