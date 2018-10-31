@@ -1,6 +1,5 @@
 <?php
-	require('../shared/params.php');
-	require('../shared/manage_keys.php');
+	require_once('../includes.php');
 
 	if (!isset($_GET['key'])) 					returns_error();
 	if (!verify_key($_GET['key']))					returns_error();

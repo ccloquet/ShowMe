@@ -1,6 +1,5 @@
 <?php
-	require_once('../shared/params.php');	 
-	require_once('../shared/manage_keys.php');		 
+	require_once('../includes.php');
 
 	if (!isset($_POST['to']))  		returns_error();
 	if (!ctype_digit($_POST['to']))		returns_error();

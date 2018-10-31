@@ -1,7 +1,6 @@
 <?php
 
-	require_once('../shared/params.php');	 
-	require_once('../shared/manage_keys.php');		 
+	require_once('../includes.php');
 
 	if (!isset($_POST['userid'])) 		returns_error(); 
 	if (!validate_user($_POST['userid']))	returns_error();
