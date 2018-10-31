@@ -116,15 +116,18 @@
 			var html = ''
 			for(var i=0; i<e.length; ++i)
 			{
-				var ts 	= new Date(parseInt(e[i].dt*1000)).toLocaleString() 
- 
-				if (!validate_key(e[i].src.substr(0, e[i].src.length-4))) 	continue
-				if (e[i].src.substr(e[i].src.length-4) != '.jpg')		continue
-
-				var src = e[i].src					
+				var ts 	 = new Date(parseInt(e[i].dt*1000)).toLocaleString() 
+			 	var src  = e[i].src					
 
 				html += "<div style='font-size:18px; margin-bottom:1em'>" +ts + "</div>";
-				html += "<img style='width:600px' src='"+src+"'/><br><br>";
+
+				if (!validate_key(src.substr(0, src.length-4))) 	continue
+				switch (src.substr(src.length-4))
+				{
+					case '.jpg':		html += "<img style='width:600px' src='"+src+"'/><br><br>";					break;
+					case '.mp4':		html += "<video width='600' controls><source src='"+src+"' type='video/mp4'></video><br><br>";	break;
+					default:		html += 'invalid file<br>'; 									continue;
+				}
 			}
 			if (html != old_html)
 			{
