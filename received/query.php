@@ -1,5 +1,9 @@
 <?php
 
+	// purpose: key egneration & polling of the server for the images to display
+	// only the names are transferred
+	// then the client decides if it transfers the files
+
 	require_once('../includes.php');
 
 	if (!isset($_POST['userid'])) 		returns_error(); 
@@ -10,12 +14,15 @@
 	switch($_POST['action'])
 	{
 		case 'init':
+			// key generation when the client initializes
 			$key    = create_key($userid);	
 			 
 			echo json_encode(['key'=>$key, 'base_url'=>BASE_URL]);
 			break;
 
 		case 'get_images':
+			// polling for the images names
+
 			// 1. DELETE FILES OLDER THAN 6 hours							// should be a cron
 			$files 	= glob($userid . "/*.jpg");
 		  	$now   	= time();
@@ -56,11 +63,5 @@
 		default:
 			echo json_encode(['message'=>'error']);
 	}
-
-	function returns_error()
-	{
-		die('ERROR');
-	}
-	
 
 ?>
