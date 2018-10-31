@@ -1,5 +1,5 @@
 # showme
-Let a citizen send a picture to the 112 dispatching, on invitation - Lightweight solution
+Let a citizen send a picture to a 112 / 911 dispatching, on invitation from the dispatcher - Lightweight solution
 
 Kinda photowall, for emergency services
 
