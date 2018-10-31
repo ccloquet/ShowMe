@@ -24,7 +24,7 @@
 			// polling for the images names
 
 			// 1. DELETE FILES OLDER THAN 6 hours							// should be a cron
-			$files 	= glob($userid . "/*.jpg");
+			$files 	= glob($userid . "/*.{jpg,mp4}", GLOB_BRACE);
 		  	$now   	= time();
 
 			foreach ($files as $file) 
@@ -39,7 +39,7 @@
 		  	}
 
 			// 2. LIST THE .JPG FILES BY DESCENDING TIME
-			$files 	= glob($userid . "/*.jpg");
+			$files 	= glob($userid . "/*.{jpg,mp4}", GLOB_BRACE);
 			usort($files, create_function('$a,$b', 'return filemtime($b) - filemtime($a);'));	// https://stackoverflow.com/questions/124958/glob-sort-by-date
 
 			// 3. RETURN THE IMAGES
