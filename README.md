@@ -17,7 +17,7 @@ If you are looking for a more complete solution for dispatchings, a project like
 
 **Configuration**
 - in html/params.js : upload_path should be set to the path & filename of the upload API
-- in shared/params.php : 
+- in config/params.php : 
   - BASE_URL should be set to the page the the citizen will see (html/index.html)
   - $params contains the userids, usernames, secrets and API key for the SMS API -> in the future, this might move to a database
 
