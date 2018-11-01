@@ -1,9 +1,16 @@
 <?php
 
+	// ------------------------------------------------------------------------------------	
 	// purpose: key egneration & polling of the server for the images to display
 	// only the names are transferred
 	// then the client decides if it transfers the files
+	// ------------------------------------------------------------------------------------
 
+    	// security measures :
+    	// - only allowed users (through theit userid) will be able to retreive data from the server
+    	// - only files with a verified key are shown 
+    	// - only a white list of extensions is possible (currently (2018-11-01): jpg and mp4)
+    	
 	require_once('../includes.php');
 
 	if (!isset($_POST['userid'])) 		returns_error(); 
@@ -50,7 +57,7 @@
 				if (is_file($file)) 
 				{
 					$fname 		= str_replace($userid, '', $file);
-					$key 		= substr($fname,1, strlen($fname)-31);
+					$key 		= substr($fname,1, strlen($fname)-31);			// remove extension (3 letters + dot) + random_bytes (26 alphanum)
 				 
 					if (!verify_key($key)) continue;
 

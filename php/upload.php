@@ -5,13 +5,19 @@
     // so that the dispatcher can see it
     // ---------------------------------------------------------------------
 
+    // security measures :
+    // - only allowed citizens (through the key mechanism) will be able to upload data to the server
+    // - only a tiny white list of mime types is possible. Files that are stored on the server will be given an extension derived from that type. Executable files are not in that list.
+    // - when possible, the files content is checked
+    // - the .htaccess mechanism prevents the data to be accessed directly from the file tree 
+
     require_once('../includes.php');
 
     // verifies that the file exists and is not too large
     if (!isset($_FILES['upload_file'])) {
         returns_error();
     }
-    if ($_FILES["upload_file"]["size"] > 50000000) {
+    if ($_FILES["upload_file"]["size"] > 50000000) { // 50 Mb... not so much for a video...
         returns_error();
     }
 
@@ -82,7 +88,7 @@
     }
 
     // the extension reflects the file extension, and comes from a closed list (cf the switch)
-    if (move_uploaded_file($tmp_name, BASE_FOLDER . '/' . $userid . '/' . $key . uniqid() . uniqid() . $file_ext)) {
+    if (move_uploaded_file($tmp_name, BASE_FOLDER . '/' . $userid . '/' . $key . bin2hex(random_bytes(13)) . $file_ext)) {
         returns_ok();
     } else {
         returns_error();
