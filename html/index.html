@@ -2,29 +2,25 @@
 <!--https://www.webcodegeeks.com/html5/html5-file-upload-example/-->
 <html>
 
-<meta charset="UTF-8">
-
-<style>
- 
-body		
-{
-		overflow-x:hidden;overflow-y:hidden;font-family:"Lucida Sans Unicode", "Lucida Grande", "Arial", Helvetica, sans-serif; background-color:rgb(16,46,66); color:white; padding:0% 2.5%; height:100%;
-		background-size: 60px 60px;
-		background-image: linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
-}
-
-</style>
-
 <head>
 	<meta charset="utf-8" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+
+	<style>
+		body
+		{
+			overflow-x:hidden;overflow-y:hidden;font-family:"Lucida Sans Unicode", "Lucida Grande", "Arial", Helvetica, sans-serif; background-color:rgb(16,46,66); color:white; padding:0% 2.5%; height:100%;
+			background-size: 60px 60px;
+			background-image: linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
+		}
+	</style>
 </head>
 <body>
 	<center>
 
 	<br>DEMO ONLY - NOT FOR REAL USE<br>
 	<input style="font-size:600%; margin-top:2em; padding:.5em; border-radius:20px" type="button" id="loadFileXml" value="📷" onclick="document.getElementById('fileinput').click();" />
-	<input type="file" style="display:none;" id="fileinput" name="fileinput"/>
+	<input type="file" accept="image/*" style="display:none;" id="fileinput" name="fileinput" capture="environment"/>
 	<br><br>
 	<div id='txt'>
 		<br>Press to take a photo
@@ -47,19 +43,24 @@ body
 
 	function uploadFile(file, upload_path, key)
 	{
+
 		var upload_url = upload_path + '?key=' + key;
 		var xhr = new XMLHttpRequest();
 		var fd  = new FormData();
+
+		console.log(upload_path, upload_url);
+
 		xhr.open("POST", upload_url, true);
 		xhr.onreadystatechange = function() 
 		{
-			if (xhr.readyState == 4 && xhr.status == 200) 
+			if (xhr.readyState == 4 && xhr.status == 200)
 			{
 				// Every thing ok, file uploaded
 				//alert(xhr.responseText); // handle response.
+				txt.innerHTML = '<br>✓ Your photo has been sent<br>✓ Votre photo a été envoyée<br>✓ Uw foto werd gestuurd'
+				setTimeout(function(){location.reload()}, 1000)
+				return;
 			}
-			txt.innerHTML = '<br>✓ Your photo has been sent<br>✓ Votre photo a été envoyée<br>✓ Uw foto werd gestuurd'
-			setTimeout(function(){location.reload()}, 1000)
 		};
 		fd.append("upload_file", file);
 	   	xhr.send(fd);
