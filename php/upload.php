@@ -5,7 +5,7 @@
     // so that the dispatcher can see it
     // ---------------------------------------------------------------------
 
-    // security measures :
+    // security measures to avoid rogue software being uploaded & executed on the machine, and to avoid exploiting the user's browser
     // - only allowed citizens (through the key mechanism) will be able to upload data to the server
     // - only a tiny white list of mime types is possible. Files that are stored on the server will be given an extension derived from that type. Executable files are not in that list.
     // - when possible, the files content is checked
@@ -36,12 +36,12 @@
     $tmp_name = $_FILES['upload_file']['tmp_name'];
 
     // applies further checks in function of the declared mime type
-    $mime_type = mime_content_type ($tmp_name);
+    $mime_type = get_mime_type ($tmp_name);
     $file_ext  = '';
 
     switch($mime_type) {
         case 'image/jpeg':
-   
+    
             // image checks
             if (exif_imagetype($tmp_name) != IMAGETYPE_JPEG) {
                 returns_error();
@@ -59,13 +59,13 @@
                      returns_error();
                  }*/
             }
-
+ 
             $type = getimagesize($tmp_name);
 
             if (($type === false) || (!in_array($type[2], [IMAGETYPE_JPEG]))) {
                 returns_error();
             }
-
+   
             $file_ext = '.jpg';
             break;
 
@@ -87,13 +87,15 @@
         mkdir(BASE_FOLDER . '/' . $userid, 0777, true);
     }
 
-    // the extension reflects the file extension, and comes from a closed list (cf the switch)
-    if (move_uploaded_file($tmp_name, BASE_FOLDER . '/' . $userid . '/' . $key . bin2hex(random_bytes(13)) . $file_ext)) {
+    // craft the new name. The extension reflects the file extension, and comes from a closed list (cf the switch)
+    $new_name = BASE_FOLDER . '/' . $userid . '/' . $key . bin2hex(random_bytes(13)) . $file_ext;
+
+    if (move_uploaded_file($tmp_name, $new_name)) {
         returns_ok();
     } else {
         returns_error();
     }
-
+  
     
 ?>
 
