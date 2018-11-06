@@ -32,7 +32,7 @@
 	<script>
 	var url 	= new URL(document.URL);
 	var key 	= url.searchParams.get("key");
-	var txt         = document.getElementById('txt')
+	var txt     = document.getElementById('txt')
 
 	document.getElementById('fileinput').addEventListener('change', function()
 	{
@@ -47,8 +47,6 @@
 		var upload_url = upload_path + '?key=' + key;
 		var xhr = new XMLHttpRequest();
 		var fd  = new FormData();
-
-		console.log(upload_path, upload_url);
 
 		xhr.open("POST", upload_url, true);
 		xhr.onreadystatechange = function() 
