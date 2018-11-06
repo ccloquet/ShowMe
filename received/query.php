@@ -6,7 +6,7 @@
 	// then the client decides if it transfers the files
 	// ------------------------------------------------------------------------------------
 
-    	// security measures :
+    	// security measures to avoid exploiting the user's browser :
     	// - only allowed users (through theit userid) will be able to retreive data from the server
     	// - only files with a verified key are shown 
     	// - only a white list of extensions is possible (currently (2018-11-01): jpg and mp4)
