@@ -37,7 +37,7 @@
         case 'image/jpeg':
    
             // image checks
-            if (exif_imagetype($tmp_name) != IMAGETYPE_JPEG) {
+            if (extension_loaded('exif') && exif_imagetype($tmp_name) != IMAGETYPE_JPEG) {
                 returns_error();
             }
 
