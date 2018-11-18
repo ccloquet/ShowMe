@@ -17,8 +17,10 @@ __either: sending a picture__
 
 __or: live streaming__
 
-3'. The citizen allows for cam and mic use.
-4'. The P2P stream is sent to the dispatching
+3. The citizen allows for cam and mic use.
+4. The P2P stream is sent to the dispatching
+5. The server validates the remote peerid and answers the call
+6. The stream is displayed in the browser
 
 If you are looking for a more complete solution for dispatchings, a project like Geoloc18_112 (Twitter: @geoloc18_112) might be worth trying.
 
