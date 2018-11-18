@@ -31,21 +31,21 @@ If you are looking for a more complete solution for dispatchings, a project like
 
 **Configuration**
 - in html/params.js: 
-  - upload_path should be set to the path & filename of the upload API
-  - peerjs_url: fully qualified domain name of your PeerJS server without preceding https and without trailing '/' (eg : mypeerjs-server.example.com, but not https://mypeerjs-server.example.com/)
+  - __client_path__: should be set to the path of the upload API (normally, ending with /php/)
+  - __peerjs_url__: fully qualified domain name of your PeerJS server without preceding https and without trailing '/' (eg : mypeerjs-server.example.com, but not https://mypeerjs-server.example.com/)
 
 - in config/params.php: 
-  - TWILIO_SID & TWILIO_APIKEY are the Twilio credentials to het the STUN (free) and TURN (paying) servers 
-  - BASE_URL should be set to the page the the citizen will see (html/index.html)
-  - $params contains the userids, usernames, secrets and API key for the SMS API -> in the future, this might move to a database
+  - __TWILIO_SID__ & __TWILIO_APIKEY__ are the Twilio credentials to het the STUN (free) and TURN (paying) servers 
+  - __BASE_URL__ should be set to the page the citizen will see (https://.../html/index.html)
+  - __$params__ contains the userids, usernames, secrets and API key for the SMS API -> in the future, this might move to a database
 
 - in received/params.js:
-  - base_url should be set to the page the the citizen will see (html/index.html)
-  - peerjs_url: fully qualified domain name of your PeerJS server without preceding https and without trailing '/'  
+  - __base_url__: should be set to the page the citizen will see (html/index.html)
+  - __peerjs_url__: fully qualified domain name of your PeerJS server without preceding https and without trailing '/'  
 
 **Troubleshooting**
 - P2P webRTC connexions might be unstable. See eg: https://peerjs.com/docs/#api
-- It may **fail behind a firewall**. See issue [..]
+- It may **fail behind a firewall** (a TURN server is configured, but port blocking / adress blocking might still be an issue)
 
 **How does the security part works**
 - Each organization gets a userid
@@ -69,14 +69,7 @@ We could also think to a password, but this would be to the detriment of the UX,
 
 **Handling of stability issues**
 - If the remote peer cannot connect after 5 seconds, the stream is destroyed and the citizen can still send a picture
-- should elaborate more cases:
-  - disconnection during a call, dispatching side
-  - disconnection during a call, citizen side
-  - broken internet connection	
-  - browser restart at the dispatching
-  - user refuses to share the camera
-  - [OK] no browser support
-  - ...
+- should elaborate more cases
 
 **Libraries used**
 - Leaflet [licence: https://github.com/Leaflet/Leaflet/blob/master/LICENSE] (c) 2010-2018, Vladimir Agafonkin, 2010-2011, CloudMade
