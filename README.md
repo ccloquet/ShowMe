@@ -9,12 +9,14 @@ Proof of concept, quick and dirty (really...), with a bit of security
 2. The dispatcher sends a link by SMS to the citizen.
 
 __either: sending a picture__
+
 3. The citizen clicks on the link and take a picture.
 4. The picture is sent to the server.
 5. The server validates the data received (image and key).
 6. The dispatcher sees the picture in reverse chronolocical order after a couple of seconds.
 
 __or: live streaming__
+
 3'. The citizen allows for cam and mic use.
 4'. The P2P stream is sent to the dispatching
 
