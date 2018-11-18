@@ -1,0 +1,11 @@
+
+shared/real_params.php
+*.js~
+*.md~
+*.swp
+*.php~
+*.html~
+config/real_params.php
+config/params.prod.php
+received/real_params.js
+html/real_params.js

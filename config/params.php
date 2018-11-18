@@ -1,6 +1,6 @@
 <?php
 
-	define('ENV',           'dev');
+	define('ENV',           'prod');
 
 	$params = [
 		// userids (confidential)							// secret -- allow to authentify that the link sent by SMS comes from this server
