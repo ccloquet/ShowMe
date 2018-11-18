@@ -24,6 +24,9 @@ __or: live streaming__
 
 If you are looking for a more complete solution for dispatchings, a project like Geoloc18_112 (Twitter: @geoloc18_112) might be worth trying.
 
+**Currently, the live streaming only works between Chrome on Android (client) and Firefox (server)**
+
+
 **Installation**
 - copy the code in a folder of your web server
 - a Peer Server is needed to use the video set up. You can deploy yours on Heroku using : https://elements.heroku.com/buttons/peers/peerjs-server. The cloud server provided by peerJS is not suitable as it does not support https and there is a risk of identifiers collision. The Heroku server should be dimensioned taking into account the forecasted usage.
