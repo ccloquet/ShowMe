@@ -22,7 +22,6 @@
 
 	<script	src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.9/peer.min.js"></script>
-
 </head>
 <body>
 	<center>
@@ -47,7 +46,6 @@
 	lang.has_been_sent   = '<br>✓ Your photo has been sent<br>✓ Votre photo a été envoyée<br>✓ Uw foto werd gestuurd'
 	
 	txt.innerHTML        = lang.press
-	
 
 	document.getElementById('fileinput').addEventListener('change', function()
 	{
@@ -124,7 +122,9 @@
 			{
 				console.log(ice_servers)
 
-				peer 	 = new Peer(mypeerid, {iceServers:ice_servers , host:peerjs_url, debug:3, port: 443, secure:true}); 
+				peer 	 = new Peer(mypeerid, {config: {iceServers: ice_servers}, host:peerjs_url, debug:3, port: 443, secure:true}); 
+
+				var heartbeater = makePeerHeartbeater( peer );
 
 				console.log(peer)
 
@@ -180,6 +180,33 @@
 		return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 	}
 
+	//https://github.com/peers/peerjs/issues/227
+	// pass the peer instance, and it will start sending heartbeats
+
+	// stop them later
+	// heartbeater.stop();
+
+	function makePeerHeartbeater ( peer ) {
+	    var timeoutId = 0;
+	    function heartbeat () {
+        	timeoutId = setTimeout( heartbeat, 10000 );
+	        if ( peer.socket._wsOpen() ) {
+        	    peer.socket.send( {type:'HEARTBEAT'} );
+	        }
+	    }
+	    // Start 
+	    heartbeat();
+	    // return
+	    return {
+	        start : function () {
+	            if ( timeoutId === 0 ) { heartbeat(); }
+	        },
+	        stop : function () {
+	            clearTimeout( timeoutId );
+	            timeoutId = 0;
+	        }
+	    };
+	}
 	// END WEBTRTC ----------------------------------------------------------------------------------
 
 	

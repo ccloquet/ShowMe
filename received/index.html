@@ -18,7 +18,7 @@
 <body>
 <br><br><b>POPPY SHOW-ME</b> - DEMO ONLY - NOT FOR REAL USE<br><br>
 <div id='send_link' style='background:darkgray; margin:1em'>
-<br>Send the <span class='hover_red btn' id='link_btn'>link</span> to the caller<br><br>
+<br>Send the <span class='hover_red btn' id='link_btn'>link</span> to the caller&nbsp;&nbsp;<span id="linking" style="display:none">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><br><br>
 <b>GSM</b>: <input style='font-size:24px;padding-left:.5em;width:200px' placeholder='eg: 32123456789' type='number' id='to' /> &nbsp; <span class='hover_red btn' id='send_btn'>SEND</span><span id="sending" style="visibility:hidden">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><span id="sent" style="visibility:hidden">&nbsp;<i class="fa fa-check"></i></span>
 <br><br>
 </div>
@@ -47,6 +47,33 @@
 	function hasGetUserMedia() 
 	{
 		return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+	}
+	//https://github.com/peers/peerjs/issues/227
+	// pass the peer instance, and it will start sending heartbeats
+
+	// stop them later
+	// heartbeater.stop();
+
+	function makePeerHeartbeater ( peer ) {
+	    var timeoutId = 0;
+	    function heartbeat () {
+        	timeoutId = setTimeout( heartbeat, 10000 );
+	        if ( peer.socket._wsOpen() ) {
+        	    peer.socket.send( {type:'HEARTBEAT'} );
+	        }
+	    }
+	    // Start 
+	    heartbeat();
+	    // return
+	    return {
+	        start : function () {
+	            if ( timeoutId === 0 ) { heartbeat(); }
+	        },
+	        stop : function () {
+	            clearTimeout( timeoutId );
+	            timeoutId = 0;
+	        }
+	    };
 	}
 	// END WEBTRTC ----------------------------------------------------------------------------------
 
@@ -82,8 +109,9 @@
 				$('#live').append('<video width="320" height="240" id="video-'+mypeerid+'" autoplay></video>')
 
 				peerids.push(mypeerid)
-				peers.push(new Peer(mypeerid, {iceServers: ice_servers, host: peerjs_url, debug: 3, port: 443, secure: true}));
+				peers.push(new Peer(mypeerid, {config: {iceServers: ice_servers}, host: peerjs_url, debug: 3, port: 443, secure: true}));
 
+				makePeerHeartbeater( peers[peers.length-1] );
 				peers[peers.length-1].on('error', function(err) { console.log('ERROR', this, err, peers); 	});
 				peers[peers.length-1].on('open',  function(id)  { console.log('My peer ID is: ' + id);		});
 
@@ -102,7 +130,7 @@
 						call.on('stream', function(remote_media_stream) 
 						{
 							var video 	= document.getElementById('video-'+mypeerid); 
-							video.srcObject = remote_media_stream
+							video.srcObject = remote_media_stream;
 						});
 					})
 				});
@@ -153,9 +181,11 @@
 
 	function get_link()
 	{
+		$('#linking').fadeIn()
 		get_key(
 		function(base_url, key)
 		{
+			$('#linking').fadeOut()
 			window.prompt('Copy the link to use it elsewhere (eg: email)', base_url + "?key=" + key)
 		});
 	}
