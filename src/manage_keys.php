@@ -5,11 +5,22 @@
 
 	function create_key($userid)
 	{
+		// The key contains:
+		//   - the current timestamp
+		//   - a random uniqueid that identifies this conversation / file upload
+		//   - a hash to authentify the key and link it to a user
+
+		// The uniqueid 
+		//   - will be used to identify the pictures sent by the recipient
+		//   - and will be used in the P2P live video, as follows:
+		//     - the master will be identified 	as [uuid]-0
+		//     - and the recipient 		as [uuid]-1
+
 		global $params;
 
 		if ($params[$userid] == null) return '';
 
-		$parts   = [];
+		$parts    = [];
 	
 		$parts[]  = date("YmdHi");
 		$parts[]  = bin2hex(random_bytes(22));

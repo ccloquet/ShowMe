@@ -14,12 +14,16 @@
 			background-image: linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
 		}
 	</style>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.9/peer.min.js"></script>
+
 </head>
 <body>
 	<center>
 
 	<br>DEMO ONLY - NOT FOR REAL USE<br>
-	<input style="font-size:600%; margin-top:2em; padding:.5em; border-radius:20px" type="button" id="loadFileXml" value="📷" onclick="document.getElementById('fileinput').click();" />
+	<br><video height="100" autoplay></video><br> <!-- VIDEO ELEMENT FOR WEBRTC -->
+	<input style="font-size:600%; margin-top:.25em; padding:.5em; border-radius:20px" type="button" id="loadFileXml" value="📷" onclick="document.getElementById('fileinput').click();" />
 	<input type="file" accept="image/*" style="display:none;" id="fileinput" name="fileinput" capture="environment"/>
 	<br><br>
 	<div id='txt'>
@@ -28,22 +32,21 @@
 		<br>Druk om een foto te nemen
 	</div>
 	</center>
-	<script src='params.js'></script>
+	<script src='params.js?a=1'></script>
 	<script>
-	var url 	= new URL(document.URL);
-	var key 	= url.searchParams.get("key");
-	var txt     = document.getElementById('txt')
+	var url          = new URL(document.URL);
+	var key          = url.searchParams.get("key");
+	var txt          = document.getElementById('txt');
 
 	document.getElementById('fileinput').addEventListener('change', function()
 	{
-		var files = this.files;
+		var files     = this.files;
 		uploadFile(files[0], upload_path, key)
 		txt.innerHTML = '<br>⏳ Your photo is being sent<br>⏳ Votre photo est en cours d\'envoi<br>⏳ Uw foto wordt gestuurd'
 	}, false);
 
 	function uploadFile(file, upload_path, key)
 	{
-
 		var upload_url = upload_path + '?key=' + key;
 		var xhr = new XMLHttpRequest();
 		var fd  = new FormData();
@@ -63,6 +66,29 @@
 		fd.append("upload_file", file);
 	   	xhr.send(fd);
 	}
+
+	// WEBRTC, using PEER.JS  -----------------------------------------------------------------------
+
+	// if is supported and while connexion -> disable the camera button -> but this is not robust...
+	
+	var mypeerid     = key.split('_')[1] + '-1'
+	var remotepeerid = key.split('_')[1] + '-0'
+
+	var peer 	 = new Peer(mypeerid, {host:peerjs_url, debug:3, port: 443, secure:true}); 
+
+	peer.on('error', function(err) { console.log(err); 		      });
+	peer.on('open',  function(id)  { console.log('My peer ID is: ' + id); });
+
+	var video = document.querySelector('video');
+	navigator.mediaDevices.getUserMedia({video: { facingMode: "environment" }, audio:true}).then(
+	function(my_media_stream) 
+	{
+		video.srcObject = my_media_stream
+		var call 	= peer.call(remotepeerid,  my_media_stream);	
+	});
+
+	// END WEBTRTC ----------------------------------------------------------------------------------
+
 	</script>
     </body>
 </html>
