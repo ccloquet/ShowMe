@@ -1,5 +1,8 @@
 <?php
 
+    define('TWILIO_SID', '');
+    define('TWILIO_APIKEY', '');
+
     define('BASE_URL', 		'https://****/index.html');				// URL OF THE CLIENT PAGE
 	define('BASE_FOLDER', 	'../received/');					// FOLDER WHERE THE IMAGES ARE STORED
 

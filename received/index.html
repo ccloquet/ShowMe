@@ -24,7 +24,7 @@
 </div>
 <h1>Images received<br><br></h1>
 
-<div id='live'>'<video width="320" height="240" id="video-0" autoplay></video></div> 
+<div id='live'></div> 
 <div id='photos'></div>
 
 <center style='font-size:12px'>info@my-poppy.eu & GitHub project contributors - <a href='https://github.com/ccloquet/showme'>github.com/ccloquet/showme</a> - MIT Licence</center>
@@ -33,7 +33,7 @@
 
 <script	src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.9/peer.min.js"></script>
-<script src='params.js?a=1'></script>
+<script src='params.js?a=2'></script>
 <script>
 	var url 	= new URL(document.URL);
 	var userid 	= url.searchParams.get("userid");
@@ -41,11 +41,16 @@
 	var key, old_html;
 
 	// WEBRTC, using PEER.JS  -----------------------------------------------------------------------
-	var peers      = []
+	var peers      = []	// => supports many incoming streams
 	var peerids    = []
+
+	function hasGetUserMedia() 
+	{
+		return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+	}
 	// END WEBTRTC ----------------------------------------------------------------------------------
 
-	function get_key(callback)		// generate the key at sending moment, not on init
+	function get_key(callback)		// generate the key &the STUN/TURN servers at sending time
 	{					// => the link changes for each recipient -> allows a unique recipient id for the live streaming
 		$.post(
 		'query.php', 
@@ -62,34 +67,69 @@
 			else
 			{
 				if (!validate_key(e.key))			return false;
-				key 	 = e.key				 
-				base_url = e.base_url				 
+
+				key 	    = e.key
+
 				callback(base_url, key)
 				
 				// WEBRTC, using PEER.JS  -----------------------------------------------------------------------
-				var mypeerid   = key.split('_')[1] + '-0'
+
+				if (!hasGetUserMedia()) return false;
+
+				var ice_servers = e.ice_servers				 
+				var mypeerid    = key + '-0'	// full key => verification possible before answering the call
 
 				$('#live').append('<video width="320" height="240" id="video-'+mypeerid+'" autoplay></video>')
 
 				peerids.push(mypeerid)
-				peers.push(new Peer(mypeerid, {host:peerjs_url, debug:3, port: 443, secure:true}));
+				peers.push(new Peer(mypeerid, {iceServers: ice_servers, host: peerjs_url, debug: 3, port: 443, secure: true}));
 
-				peers[peers.length-1].on('error', function(err) { console.log(err); 			});
-				peers[peers.length-1].on('open',  function(id)  { console.log('My peer ID is: ' + id);	});
+				peers[peers.length-1].on('error', function(err) { console.log('ERROR', this, err, peers); 	});
+				peers[peers.length-1].on('open',  function(id)  { console.log('My peer ID is: ' + id);		});
 
 				peers[peers.length-1].on('call', function(call) 
 				{
-					call.answer();	// no mediastream here -> one way only
-					call.on('stream', function(remote_media_stream) 
+					console.log(call)	// call.id,
+					// from the call, get the remoteid (= call.peer)
+					// verify it (! it should take less than 5 seconds !)
+					// if verified => answer
+
+					verify_key(call.peer.substr(0, call.peer.length-2), function()
 					{
-						var video 	= document.getElementById('video-0'); // +mypeerid
-						video.srcObject = remote_media_stream
-					});
+						console.log('REMOTE KEY IS ALLOWED');
+
+						call.answer();	// no mediastream here -> one way only
+						call.on('stream', function(remote_media_stream) 
+						{
+							var video 	= document.getElementById('video-'+mypeerid); 
+							video.srcObject = remote_media_stream
+						});
+					})
 				});
 				// END WEBTRTC ----------------------------------------------------------------------------------
 			}
 		}, 
 		'json') 
+	}
+
+	// function: verify the key (deduced from the remote peer id) before answering
+	function verify_key(received_key, callback)
+	{
+		$.post(
+		'query.php', 
+		{
+			action:	'verify_key',
+			userid:	userid,
+			key:	received_key
+		},						
+		function(e)					
+		{
+			if (e.result == 'OK')
+			{
+				callback()
+			}
+		},
+		'json')
 	}
 
 	function validate_key(key)

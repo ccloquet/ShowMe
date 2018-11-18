@@ -12,7 +12,7 @@ __either: sending a picture__
 3. The citizen clicks on the link and take a picture.
 4. The picture is sent to the server.
 5. The server validates the data received (image and key).
-6. The dispatcher sees the pictures in reverse chronolocical order after a couple of seconds.
+6. The dispatcher sees the picture in reverse chronolocical order after a couple of seconds.
 
 __or: live streaming__
 3'. The citizen allows for cam and mic use.
@@ -22,8 +22,8 @@ If you are looking for a more complete solution for dispatchings, a project like
 
 **Installation**
 - copy the code in a folder of your web server
-- a Peer Server is needed to use the video set up. You can for instance deploy yours on Heroku using : https://elements.heroku.com/buttons/peers/peerjs-server. The cloud server provided by peerJS is not suitable as it does not support https and there is a risk of identifiers collision
-
+- a Peer Server is needed to use the video set up. You can deploy yours on Heroku using : https://elements.heroku.com/buttons/peers/peerjs-server. The cloud server provided by peerJS is not suitable as it does not support https and there is a risk of identifiers collision
+- for real world use cases, a STUN & a TURN server is needed. This example uses Twilio's. See eg: https://peerjs.com/docs/#api, https://www.avaya.com/blogs/archives/2014/08/understanding-webrtc-media-connections-ice-stun-and-turn.html &  https://www.html5rocks.com/en/tutorials/webrtc/infrastructure, https://www.twilio.com/stun-turn
 
 **Configuration**
 - in html/params.js: 
@@ -31,6 +31,7 @@ If you are looking for a more complete solution for dispatchings, a project like
   - peerjs_url: fully qualified domain name of your PeerJS server without preceding https and without trailing '/' (eg : mypeerjs-server.example.com, but not https://mypeerjs-server.example.com/)
 
 - in config/params.php: 
+  - TWILIO_SID & TWILIO_APIKEY are the Twilio credentials to het the STUN (free) and TURN (paying) servers 
   - BASE_URL should be set to the page the the citizen will see (html/index.html)
   - $params contains the userids, usernames, secrets and API key for the SMS API -> in the future, this might move to a database
 
@@ -38,8 +39,11 @@ If you are looking for a more complete solution for dispatchings, a project like
   - base_url should be set to the page the the citizen will see (html/index.html)
   - peerjs_url: fully qualified domain name of your PeerJS server without preceding https and without trailing '/'  
 
-**How does the security part works**
+**Troubleshooting**
+- P2P webRTC connexions might be unstable. See eg: https://peerjs.com/docs/#api
+- It may **fail behind a firewall**. See issue [..]
 
+**How does the security part works**
 - Each organization gets a userid
 - The user opens https://***/received/index.html?userid=USERID
 - This queries the API (query.php), which returns a key
@@ -55,6 +59,20 @@ If you are looking for a more complete solution for dispatchings, a project like
 We could also think to a password, but this would be to the detriment of the UX, is it worth here ?
 
 -> Does all this make sense ?
+
+**Note**
+- the capture API is still used as the capture from the stream is not (yet?) available eg. on iOS. For it to work, when a user clicks on the camera button, the stream is interrupted. It is resumed when the user clicks on the video, or automatically after the sending of the picture
+
+**Handling of stability issues**
+- If the remote peer cannot connect after 5 seconds, the stream is destroyed and the citizen can still send a picture
+- should elaborate more cases:
+  - disconnection during a call, dispatching side
+  - disconnection during a call, citizen side
+  - broken internet connection	
+  - browser restart at the dispatching
+  - user refuses to share the camera
+  - [OK] no browser support
+  - ...
 
 **Libraries used**
 - Leaflet [licence: https://github.com/Leaflet/Leaflet/blob/master/LICENSE] (c) 2010-2018, Vladimir Agafonkin, 2010-2011, CloudMade

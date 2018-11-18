@@ -13,8 +13,14 @@
 			background-size: 60px 60px;
 			background-image: linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
 		}
+		.streaming_on 
+		{
+			border: 3px solid red;
+			border-radius: 10px;
+		}
 	</style>
 
+	<script	src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.9/peer.min.js"></script>
 
 </head>
@@ -22,27 +28,32 @@
 	<center>
 
 	<br>DEMO ONLY - NOT FOR REAL USE<br>
-	<br><video height="100" autoplay></video><br> <!-- VIDEO ELEMENT FOR WEBRTC -->
-	<input style="font-size:600%; margin-top:.25em; padding:.5em; border-radius:20px" type="button" id="loadFileXml" value="📷" onclick="document.getElementById('fileinput').click();" />
+	<br><video height="175" autoplay id="video-0"></video><br> <!-- VIDEO ELEMENT FOR WEBRTC -->
+	<input style="font-size:300%; margin-top:.25em; padding:.5em; border-radius:20px" type="button" id="loadFileXml" value="📷" onclick="document.getElementById('fileinput').click();" />
 	<input type="file" accept="image/*" style="display:none;" id="fileinput" name="fileinput" capture="environment"/>
 	<br><br>
-	<div id='txt'>
-		<br>Press to take a photo
-		<br>Appuyez pour prendre une photo
-		<br>Druk om een foto te nemen
-	</div>
+	<div id='txt'></div>
 	</center>
-	<script src='params.js?a=1'></script>
+	<script src='params.js?a=2'></script>
 	<script>
 	var url          = new URL(document.URL);
 	var key          = url.searchParams.get("key");
 	var txt          = document.getElementById('txt');
 
+	var lang             = {}
+
+	lang.press           = '<br>Press if you want to take a photo<br>Appuyez si vous voulez prendre une photo<br>Druk ans u een een foto wilt nemen'
+	lang.being_sent      = '<br>⏳ Your photo is being sent<br>⏳ Votre photo est en cours d\'envoi<br>⏳ Uw foto wordt gestuurd'
+	lang.has_been_sent   = '<br>✓ Your photo has been sent<br>✓ Votre photo a été envoyée<br>✓ Uw foto werd gestuurd'
+	
+	txt.innerHTML        = lang.press
+	
+
 	document.getElementById('fileinput').addEventListener('change', function()
 	{
 		var files     = this.files;
-		uploadFile(files[0], upload_path, key)
-		txt.innerHTML = '<br>⏳ Your photo is being sent<br>⏳ Votre photo est en cours d\'envoi<br>⏳ Uw foto wordt gestuurd'
+		uploadFile(files[0], client_path + '/upload.php', key)
+		txt.innerHTML = lang.being_sent
 	}, false);
 
 	function uploadFile(file, upload_path, key)
@@ -58,7 +69,7 @@
 			{
 				// Every thing ok, file uploaded
 				//alert(xhr.responseText); // handle response.
-				txt.innerHTML = '<br>✓ Your photo has been sent<br>✓ Votre photo a été envoyée<br>✓ Uw foto werd gestuurd'
+				txt.innerHTML = lang.has_been_sent
 				setTimeout(function(){location.reload()}, 1000)
 				return;
 			}
@@ -69,26 +80,109 @@
 
 	// WEBRTC, using PEER.JS  -----------------------------------------------------------------------
 
-	// if is supported and while connexion -> disable the camera button -> but this is not robust...
-	
-	var mypeerid     = key.split('_')[1] + '-1'
-	var remotepeerid = key.split('_')[1] + '-0'
+	var peer         = null;
+	var video 	 = document.querySelector('video');
 
-	var peer 	 = new Peer(mypeerid, {host:peerjs_url, debug:3, port: 443, secure:true}); 
+	// configure
+	var mypeerid     = key + '-1'	// full key => verification possible before answering the call
+	var remotepeerid = key + '-0'	
 
-	peer.on('error', function(err) { console.log(err); 		      });
-	peer.on('open',  function(id)  { console.log('My peer ID is: ' + id); });
+	// 1. automatically initialize peer
+	peer_init()
 
-	var video = document.querySelector('video');
-	navigator.mediaDevices.getUserMedia({video: { facingMode: "environment" }, audio:true}).then(
-	function(my_media_stream) 
+	// 2. destroys peer & stream if user clicks to take a picture (otherwise: camera locked)
+	$('#fileinput').on('click', function() 
 	{
-		video.srcObject = my_media_stream
-		var call 	= peer.call(remotepeerid,  my_media_stream);	
+		peer_destroy()
 	});
+
+	// 3. reinit peer & stream if click on video AND peer is null
+	//    note: after the picture is taken, will reload the page => will reinit the stream
+	$('#video-0').on('click', function()
+	{
+		if (peer === null)
+		{
+			peer_init()
+		}
+	});
+
+	// function: initialize peer & mediastream
+	function peer_init()
+	{	
+		if (!hasGetUserMedia()) 
+		{
+			return false;
+		}
+
+		$.post(
+			client_path + '/utilities.php', 
+			{
+				action:	'get_ice_servers',
+				key:	key
+			},						
+			function(ice_servers)					
+			{
+				console.log(ice_servers)
+
+				peer 	 = new Peer(mypeerid, {iceServers:ice_servers , host:peerjs_url, debug:3, port: 443, secure:true}); 
+
+				console.log(peer)
+
+				video.classList.remove("streaming_on")
+
+				peer.on('open',  function(id)  
+				{
+					console.log('My peer ID is: ' + id); 
+					video.classList.add("streaming_on")
+				});
+
+				peer.on('error', function(err) 
+				{
+					console.log(err)
+					peer_destroy()
+				});
+
+				navigator.mediaDevices.getUserMedia({video: { facingMode: "environment" }, audio:true})
+				.then(function(my_media_stream) 
+				{
+					video.srcObject = my_media_stream
+					var call 	= peer.call(remotepeerid,  my_media_stream);	
+				})
+				.catch(function(err) 
+				{
+					console.log('ERROR', err)
+					peer_destroy()
+				});
+			}, 'json');
+	}
+
+	// function: destroys peer & mediastream
+	function peer_destroy()
+	{
+		if (peer !== null) 
+		{
+			peer.destroy()
+		}
+		peer 		= null
+
+		var stream = video.srcObject;
+		var tracks = stream.getTracks();  
+	 
+		for (var i=0; i<tracks.length; ++i) 
+		{
+			tracks[i].stop();
+		}
+		video.classList.remove("streaming_on")
+	}
+
+	function hasGetUserMedia() 
+	{
+		return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+	}
 
 	// END WEBTRTC ----------------------------------------------------------------------------------
 
+	
 	</script>
     </body>
 </html>
