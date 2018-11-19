@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<html style='background:#dadada;'>
+<html style='background:#209387;'>
 <head>
 <title>Poppy Show Me</title>
 <meta charset='utf-8'>
@@ -8,26 +8,31 @@
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
 <style>
-	body 		 { background: #dadada; font-family: 'Lucida Sans', Helvetica, Arial, 'Lucida Grande', sans-serif; font-weight: 400; font-size: 24px; line-height: 18px; padding: 0; margin: 0; text-align: center;}
+	body 		 { background: #209387; color: #c3e0dd; font-family: Roboto, Verdana, 'Lucida Sans', Helvetica, Arial, 'Lucida Grande', sans-serif; font-weight: 400; font-size: 24px; line-height: 18px; padding: 0; margin: 0; text-align: center;}
 	@media only screen and (max-width: 700px) { .wrap { padding: 15px; } }
 	h1 		 { text-align: center; margin: 40px 0; font-size: 22px; font-weight: bold; color: #666; }
-	.hover_red:hover { background:#948282; color:white}
-	.btn 		 { border:1px solid black; padding:3px 9px; font-weight:bold; font-family:Lucida Sans; font-size:24px;}
+	.hover_red:hover { background:#c3e0dd; color:#337a73}
+	.btn 		 { border:1px solid #c3e0dd; padding:3px 9px; font-weight:bold; font-family: Roboto, Verdana, 'Lucida Sans', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size:24px;}
+	.img_element	 { margin:1em .5em }
+	.flex_display	 { display: flex;  justify-content: center; flex-wrap: wrap; }
+	a		 { color:#c3e0dd }
 </style>
 </head>
 <body>
-<br><br><b>POPPY SHOW-ME</b> - DEMO ONLY - NOT FOR REAL USE<br><br>
-<div id='send_link' style='background:darkgray; margin:1em'>
-<br>Send the <span class='hover_red btn' id='link_btn'>link</span> to the caller&nbsp;&nbsp;<span id="linking" style="display:none">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><br><br>
-<b>GSM</b>: <input style='font-size:24px;padding-left:.5em;width:200px' placeholder='eg: 32123456789' type='number' id='to' /> &nbsp; <span class='hover_red btn' id='send_btn'>SEND</span><span id="sending" style="visibility:hidden">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><span id="sent" style="visibility:hidden">&nbsp;<i class="fa fa-check"></i></span>
+<div style='margin:2em 0;font-family:Verdana'>
+<span style='color:#cd3233;background:rgba(255,255,255, .5); padding:3px 6px'>POPPY SHOW-ME - DEMO ONLY - NOT FOR REAL USE</span>
+</div>
+<div id='send_link' style='background:#337a73; color:#c3e0dd; margin:1em 0'>
+<br>Send the <span class='hover_red btn' style='font-weight:normal' id='link_btn'>link</span> to the caller&nbsp;&nbsp;<span id="linking" style="display:none">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><br><br>
+<b>GSM</b> → <input style='font-size:24px;padding-left:.5em;width:200px' placeholder='eg: 32123456789' type='number' id='to' /> → <span class='hover_red btn' id='send_btn'>SEND</span><span id="sending" style="visibility:hidden">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><span id="sent" style="visibility:hidden">&nbsp;<i class="fa fa-check"></i></span>
 <br><br>
 </div>
-<h1>Images received<br><br></h1>
+<center>Images received</center><br><br>
 
-<div id='live'></div> 
-<div id='photos'></div>
+<div id='live'   class='flex_display'></div> 
+<div id='photos' class='flex_display'></div>
 
-<center style='font-size:12px'>info@my-poppy.eu & GitHub project contributors - <a href='https://github.com/ccloquet/showme'>github.com/ccloquet/showme</a> - MIT Licence</center>
+<div style='background:#209387; color:black; position:fixed; bottom:0px;left:0; width:100%; padding-bottom:0; text-align:center;font-size:12px'>&copy; info@my-poppy.eu & GitHub project contributors - <a href='https://github.com/ccloquet/showme'>github.com/ccloquet/showme</a> - MIT Licence</center>
 </body>
 </html>
 
@@ -35,8 +40,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.9/peer.min.js"></script>
 <script src='params.js?a=2'></script>
 <script>
-	var url 	= new URL(document.URL);
-	var userid 	= url.searchParams.get("userid");
+	var query_string = getQueryString();
+	var userid 	 = query_string["userid"];
 	 			 
 	var key, old_html;
 
@@ -106,7 +111,7 @@
 				var ice_servers = e.ice_servers				 
 				var mypeerid    = key + '-0'	// full key => verification possible before answering the call
 
-				$('#live').append('<video width="320" height="240" id="video-'+mypeerid+'" autoplay></video>')
+				$('#live').append('<div><video width="320" height="240" id="video-'+mypeerid+'" autoplay></video></div>')
 
 				peerids.push(mypeerid)
 				peers.push(new Peer(mypeerid, {config: {iceServers: ice_servers}, host: peerjs_url, debug: 3, port: 443, secure: true}));
@@ -124,13 +129,14 @@
 
 					verify_key(call.peer.substr(0, call.peer.length-2), function()
 					{
-						console.log('REMOTE KEY IS ALLOWED');
+						//'REMOTE KEY IS ALLOWED'
 
 						call.answer();	// no mediastream here -> one way only
 						call.on('stream', function(remote_media_stream) 
 						{
 							var video 	= document.getElementById('video-'+mypeerid); 
 							video.srcObject = remote_media_stream;
+							console.log(video, video.srcObject, remote_media_stream)
 						});
 					})
 				});
@@ -229,7 +235,7 @@
 				var ts 	 = new Date(parseInt(e[i].dt*1000)).toLocaleString() 
 			 	var src  = e[i].src					
 
-				html += "<div style='font-size:18px; margin-bottom:1em'>" + ts + "</div>";
+				var th   = "<div style='font-size:18px; margin:.5em'>" + ts + "</div>";
 
 				// security measures :
 				// the key should be valid (a-z0-9_) => not possible to insert code through this mechanism
@@ -239,9 +245,9 @@
 
 				switch (src.substr(src.length-4))
 				{
-					case '.jpg':		html += "<img style='width:600px' src='"+src+"'/><br><br>";					break;
-					case '.mp4':		html += "<video width='600' controls><source src='"+src+"' type='video/mp4'></video><br><br>";	break;
-					default:		html += 'invalid file<br>'; 									continue;
+					case '.jpg':		html += "<div class='img_element'>"+th+"<img style='width:600px' src='"+src+"'/></div>";					break;
+					case '.mp4':		html += "<div class='img_element'>"+th+"<video width='600' controls><source src='"+src+"' type='video/mp4'></video></div>";	break;
+					default:		html += "<div class='img_element'>"+th+"invalid file</div>"; 									continue;
 				}
 			}
 			if (html != old_html)
@@ -252,6 +258,33 @@
 		},
 		'json') 
 	}
+	
+	// bcz Internet Explorer does not support new URL()
+	// https://stackoverflow.com/questions/48447629/new-urllocation-href-doesnt-work-in-ie
+	function getQueryString() 
+	{
+          var key = false, res = {}, itm = null;
+          // get the query string without the ?
+          var qs = location.search.substring(1);
+          // check for the key as an argument
+          if (arguments.length > 0 && arguments[0].length > 1)
+            key = arguments[0];
+          // make a regex pattern to grab key/value
+          var pattern = /([^&=]+)=([^&]*)/g;
+          // loop the items in the query string, either
+          // find a match to the argument, or build an object
+          // with key/value pairs
+          while (itm = pattern.exec(qs)) 
+	  {
+            if (key !== false && decodeURIComponent(itm[1]) === key)
+              return decodeURIComponent(itm[2]);
+            else if (key === false)
+              res[decodeURIComponent(itm[1])] = decodeURIComponent(itm[2]);
+          }
+
+          return key === false ? res : null;
+	}
+
 
 	load_data()									// this is independent of the key 
 	setInterval(load_data, 10000)							// would best be events, not polling ... Eg. using PubNub	
