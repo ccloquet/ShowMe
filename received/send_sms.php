@@ -5,7 +5,7 @@
 	// so that he/she can send an image/video to the dispatcher
 	// ------------------------------------------------------------------	
 
-	require_once('../includes.php');
+	include_once('../includes.php');
 
 	// destination number check
 	// should be in international format, without leading '+' or '00'
@@ -14,12 +14,12 @@
 
 	// checks that the userid is legitimate
 	if (!isset($_POST['userid'])) 		returns_error();
-	if (!validate_user($_POST['userid']))	returns_error();
+	if (!$keyManager->checkUser($_POST['userid']))	returns_error();
 
 	// check that the key is legitimate 
 	// (ie, that the key comes from a legitimate user, within the correct timeframe)	--should check it comes from the userid
 	if (!isset($_POST['key'])) 		returns_error();
-	if (!verify_key($_POST['key'])) 	returns_error();
+	if (!$keyManager->check($_POST['key'])) 	returns_error();
 
 
 	$to   		= '+' . $_POST['to'];

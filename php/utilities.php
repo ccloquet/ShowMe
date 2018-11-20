@@ -4,7 +4,7 @@
     // helpers for the client (citizen) side
     // ---------------------------------------------------------------------
 
-    require_once('../includes.php');
+    include_once('../includes.php');
   
     if (!isset($_POST['key'])) {
         returns_error();
@@ -26,7 +26,7 @@
 		curl_setopt($ch, CURLOPT_HTTPAUTH, 		CURLAUTH_BASIC);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,  	1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,  	false);
-	        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,  	0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,  	0);
 		curl_setopt($ch, CURLOPT_POSTFIELDS,     	http_build_query($fields));
 		$ret = curl_exec($ch);
 		curl_close($ch);

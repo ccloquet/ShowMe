@@ -11,7 +11,7 @@
     // - when possible, the files content is checked
     // - the .htaccess mechanism prevents the data to be accessed directly from the file tree 
 
-    require_once('../includes.php');
+    include_once('../includes.php');
 
     // verifies that the file exists and is not too large
     if (!isset($_FILES['upload_file'])) {
@@ -25,7 +25,7 @@
     if (!isset($_GET['key'])) {
         returns_error();
     }
-    if (!verify_key($_GET['key'])) {
+    if (!$keyManager->check($_GET['key'])) {
         returns_error();
     }
    

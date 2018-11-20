@@ -10,3 +10,5 @@ config/params.prod.php
 received/real_params.js
 html/real_params.js
 *.swo
+
+/vendor/

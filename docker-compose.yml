@@ -9,10 +9,23 @@ services:
     volumes:
     - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     - .:/app
+    environment:
+    - VIRTUAL_HOST=showme.loc
     depends_on:
     - php
 
   php:
-    image: jorge07/alpine-php:7.2-dev-sf
+    build:
+      context: ./docker/php
+    expose:
+    - 9000
     volumes:
     - .:/app
+
+
+  reverse-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+    - "80:80"
+    volumes:
+    - /var/run/docker.sock:/tmp/docker.sock:ro

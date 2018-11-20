@@ -1,0 +1,15 @@
+{
+    "name": "ccloquet/showme",
+    "description": "Let a citizen send a picture to the 112 / 911 dispatching, on invitation from the dispatcher",
+    "type": "project",
+    "require": {
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "license" : "MIT",
+    "autoload": {
+        "psr-4": {
+            "Showme\\": "src/"
+        }
+    }
+}
