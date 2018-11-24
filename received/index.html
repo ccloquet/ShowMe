@@ -24,7 +24,9 @@
 </div>
 <div id='send_link' style='background:#337a73; color:#c3e0dd; margin:1em 0'>
 <br>Send the <span class='hover_red btn' style='font-weight:normal' id='link_btn'>link</span> to the caller&nbsp;&nbsp;<span id="linking" style="display:none">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><br><br>
-<b>GSM</b> → <input style='font-size:24px;padding-left:.5em;width:200px' placeholder='eg: 32123456789' type='number' id='to' /> → <span class='hover_red btn' id='send_btn'>SEND</span><span id="sending" style="visibility:hidden">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><span id="sent" style="visibility:hidden">&nbsp;<i class="fa fa-check"></i></span>
+<span  style="visibility:hidden">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><span style="visibility:hidden">&nbsp;<i class="fa fa-check"></i></span><!--to equilibrate the centering, quick & dumb way...-->
+<b>GSM</b> → <input style='font-size:24px;padding-left:.5em;width:200px' placeholder=' eg: 32123456789' type='number' id='to' /> → <span class='hover_red btn' id='send_btn'>SEND</span>
+<span id="sending" style="visibility:hidden">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><span id="sent" style="visibility:hidden">&nbsp;<i class="fa fa-check"></i></span>
 <br><br>
 </div>
 <center>Images received</center><br><br>
@@ -37,7 +39,7 @@
 </html>
 
 <script	src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.9/peer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.18/peer.min.js"></script>
 <script src='params.js?a=2'></script>
 <script>
 	var query_string = getQueryString();
