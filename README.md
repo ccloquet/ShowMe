@@ -1,30 +1,33 @@
 # showme
-Let a citizen send a picture or a live video to a 112 / 911 dispatching, on invitation from the dispatcher - Lightweight solution
+Let a citizen send a live video or a picture to a 112 / 911 public safety answering point (PSAP), on invitation from the dispatcher - Lightweight solution
 
-Kinda photowall, for emergency services
+Kinda photowall, for emergency services.
+
+ 
+<img src="https://raw.githubusercontent.com/ccloquet/showme/master/screenshot.png" width="350" title="screenshot">
+ 
 
 Proof of concept, quick and dirty (really...), with a bit of security
 
 1. The dispatcher connects to the interface of its organization
 2. The dispatcher sends a link by SMS to the citizen.
 
-__either: sending a picture__
+__either: live streaming__
 
-3. The citizen clicks on the link and take a picture.
-4. The picture is sent to the server.
-5. The server validates the data received (image and key).
-6. The dispatcher sees the picture in reverse chronolocical order after a couple of seconds.
-
-__or: live streaming__
-
-3. The citizen allows for cam and mic use.
+3. The citizen turns mobile data on, clicks on the link and allows for cam and mic use
 4. The P2P stream is sent to the dispatching
 5. The server validates the remote peerid and answers the call
 6. The stream is displayed in the browser
 
-If you are looking for a more complete solution for dispatchings, a project like Geoloc18_112 (Twitter: @geoloc18_112) might be worth trying.
+__or: sending a picture__
 
-**Currently, the live streaming only works between Chrome on Android (client) and Firefox (server)**
+3. The citizen turns mobile data on, clicks on the link and takes a picture
+4. The picture is sent to the server
+5. The server validates the data received (image and key)
+6. The dispatcher sees the picture in reverse chronolocical order after a couple of seconds.
+
+
+If you are looking for a more complete solution for dispatchings, a project like Geoloc18_112 (Twitter: @geoloc18_112) might be worth trying.
 
 
 **Installation**
