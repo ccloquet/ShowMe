@@ -48,7 +48,7 @@
 		    		$ice_servers 	= $ret["ice_servers"];
 			}
  
-			$result = ['key'=>$key, 'ice_servers' => $ice_servers];
+			$result = ['key'=>$key, 'ice_servers' => $ice_servers, 'base_url'=>BASE_URL];
 			break;
 
 		case 'verify_key':

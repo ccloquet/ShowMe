@@ -127,7 +127,7 @@
 		},						
 		function(e)					
 		{
-			if (e.key == '') 
+			if ( (e.key == '') | (e.base_url == '') )
 			{
 				return false;
 			}
@@ -137,7 +137,7 @@
 
 				key 	    = e.key
 
-				callback(base_url, key)
+				callback(e.base_url, key)
 				
 				// WEBRTC, using PEER.JS  -----------------------------------------------------------------------
 
