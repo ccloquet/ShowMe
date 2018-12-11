@@ -3,7 +3,8 @@
 <head>
 <title>Poppy Show Me</title>
 <meta charset='utf-8'>
-<meta name='viewport' content='width=device-width,height=device-height,initial-scale=1.0,maximum-scale=1.0, viewport-fit=cover'>
+<meta name="referrer" 	content="origin" />
+<meta name='viewport' 	content='width=device-width,height=device-height,initial-scale=1.0,maximum-scale=1.0, viewport-fit=cover'>
 
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
@@ -16,17 +17,43 @@
 	.img_element	 { margin:1em .5em }
 	.flex_display	 { display: flex;  justify-content: center; flex-wrap: wrap; }
 	a		 { color:#c3e0dd }
+ 
+	.center-div
+	{
+		font-size:150%;
+		position: fixed;	top: 0;  right: 0;  bottom: 0;  left: 0;
+		width: 300px;  height: 2.5em;
+		margin: auto;
+		padding-top:1.5em; 
+  		border-radius: 3px;
+ 		border: 3px solid red; 
+		color:white;
+		background:rgba(255,0,0,.75)
+	}
+
 </style>
+
+
 </head>
 <body>
 <div style='margin:2em 0;font-family:Verdana'>
-<span style='color:#cd3233;background:rgba(255,255,255, .5); padding:3px 6px'>POPPY SHOW-ME - DEMO ONLY - NOT FOR REAL USE</span>
+	<span style='color:#cd3233;background:rgba(255,255,255, .5); padding:3px 6px'>POPPY SHOW-ME - DEMO ONLY - NOT FOR REAL USE</span>
+</div>
+<div style='position:fixed; top:20px; right:10px; text-align:right;font-size:60%; line-height:1.4em;margin-right:10px'>
+	<span id='credits'><i class='fa fa-spin fa-spinner'></i></span> credits<br>
 </div>
 <div id='send_link' style='background:#337a73; color:#c3e0dd; margin:1em 0'>
 <br>Send the <span class='hover_red btn' style='font-weight:normal' id='link_btn'>link</span> to the caller&nbsp;&nbsp;<span id="linking" style="display:none">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><br><br>
-<span  style="visibility:hidden">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><span style="visibility:hidden">&nbsp;<i class="fa fa-check"></i></span><!--to equilibrate the centering, quick & dumb way...-->
+<span style='display:inline-block; width:1em; margin-top:-1em'></span><!--to equilibrate the centering, quick & dumb way...-->
+
 <b>GSM</b> → <input style='font-size:24px;padding-left:.5em;width:200px' placeholder=' eg: 32123456789' type='number' id='to' /> → <span class='hover_red btn' id='send_btn'>SEND</span>
-<span id="sending" style="visibility:hidden">&nbsp;<i class="fa fa-spin fa-spinner"></i></span><span id="sent" style="visibility:hidden">&nbsp;<i class="fa fa-check"></i></span>
+
+<span style='display:inline-block; width:1em; margin-top:-1em'>
+	<span id="sending" 	style="display:none">&nbsp;<i class="fa fa-spin fa-spinner"></i></span>
+	<span id="sent_success" style="display:none">&nbsp;<i class="fa fa-check" ></i></span>
+	<span id="sent_error" 	style="display:none">&nbsp;<i class="fa fa-times" style="color:#cd3233"></i></span>
+</span>
+
 <br><br>
 </div>
 <center>Images received</center><br><br>
@@ -34,7 +61,10 @@
 <div id='live'   class='flex_display'></div> 
 <div id='photos' class='flex_display'></div>
 
-<div style='background:#209387; color:black; position:fixed; bottom:0px;left:0; width:100%; padding-bottom:0; text-align:center;font-size:12px'>&copy; info@my-poppy.eu & GitHub project contributors - <a href='https://github.com/ccloquet/showme'>github.com/ccloquet/showme</a> - MIT Licence</center>
+<div style='background:#209387; color:black; position:fixed; bottom:0px;left:0; width:100%; padding-bottom:0; text-align:center;font-size:12px'>&copy; <a href='mailto:info@my-poppy.eu'>info@my-poppy.eu</a> & GitHub project contributors - <a href='https://github.com/ccloquet/showme' target='_blank'>github.com/ccloquet/showme</a> - MIT Licence</center>
+
+<div class='center-div' id='error_box' style='display:none'></div>
+
 </body>
 </html>
 
@@ -44,6 +74,9 @@
 <script>
 	var query_string = getQueryString();
 	var userid 	 = query_string["userid"];
+	
+	var query_php    = client_path + '/query.php',
+	    send_sms_php = client_path + '/send_sms.php'
 	 			 
 	var key, old_html;
 
@@ -87,7 +120,7 @@
 	function get_key(callback)		// generate the key &the STUN/TURN servers at sending time
 	{					// => the link changes for each recipient -> allows a unique recipient id for the live streaming
 		$.post(
-		'query.php', 
+		query_php,
 		{
 			action:	'init',
 			userid:	userid					 
@@ -113,7 +146,7 @@
 				var ice_servers = e.ice_servers				 
 				var mypeerid    = key + '-0'	// full key => verification possible before answering the call
 
-				$('#live').append('<div><video width="320" height="240" id="video-'+mypeerid+'" autoplay></video></div>')
+				$('#live').append('<div><video style="border-radius:10px; margin:0 10px" height="360" id="video-'+mypeerid+'" autoplay></video></div>')
 
 				peerids.push(mypeerid)
 				peers.push(new Peer(mypeerid, {config: {iceServers: ice_servers}, host: peerjs_url, debug: 3, port: 443, secure: true}));
@@ -152,7 +185,7 @@
 	function verify_key(received_key, callback)
 	{
 		$.post(
-		'query.php', 
+		query_php, 
 		{
 			action:	'verify_key',
 			userid:	userid,
@@ -175,16 +208,20 @@
 
 		return true
 	}
-	function sending_show()
-	{
-		$('#sent').css('visibility', 'hidden')
-		$('#sending').css('visibility', '')
-	}
 
-	function sending_hide()
+	function sending_status_show(status)
 	{
-		$('#sending').css('visibility', 'hidden')
-		$('#sent').css('visibility', '')
+		$('#sent_error').hide();
+		$('#sending').hide();
+		$('#sent_success').hide();
+
+		switch(status)
+		{
+			case 'sending':	$('#sending').show(); break;
+			case 'success': $('#sent_success').show(); setTimeout(function(){sending_status_show('hide')}, 2500); break;
+			case 'error':   $('#sent_error').show(); setTimeout(function(){sending_status_show('hide')}, 2500); break;
+			case 'hide': 														break;
+		}
 	}
 
 	function get_link()
@@ -202,29 +239,92 @@
 		get_key(
 		function(base_url, key)
 		{
-			sending_show();
+			sending_status_show('sending');
 
 			$.post(
-			'send_sms.php', 
+			send_sms_php,
 			{
 				key:	key, 
 				to:	$('#to').val(),
 				userid:	userid			
 			},
-			function()
+			function(){}, 
+			'json')
+			.done(function(e)
+			{
+				sending_status_show('success');
+
+				if (e == null)
+				{
+					error_msg();
+				}
+				else if (e.result == null)
+				{
+					error_msg();
+				}
+				else 
+				{
+					switch(e.result)
+					{
+						case 'ERROR':		error_msg();
+									break;
+
+						case 'NOCREDIT':	$('#credits').text(0);
+									error_msg('You do not have credit left');
+									break;
+
+						case 'OK':		$('#credits').text(e.credits);
+									break;
+
+						default:		error_msg();
+									break;
+					}
+				}				
+				
+			})
+			.fail(function()
+			{
+				error_msg('AN ERROR OCCURED');
+			})
+			.always(function()
 			{
 				$('#to').val('')
-				sending_hide()
-			});
-	 		
-			// add error management...
+				
+			})
+			
 		});
+	}
+
+	function error_msg(txt)
+	{
+		if (txt == null)
+		{
+			txt = '☂ An error occured';
+		}
+		sending_status_show('error');
+		$('#error_box').text(txt)
+		$('#error_box').fadeIn(1500, function(){$('#error_box').fadeOut(1500)})
+	}
+
+	function get_usage(callback)
+	{
+		$.post(
+		query_php, 
+		{
+			action:	'get_usage',
+			userid:	userid,
+		},						
+		function(e)					
+		{
+			callback(e.result)
+		},
+		'json')
 	}
 
 	function load_data()
 	{
 		$.post(
-		'query.php', 
+		query_php,
 		{
 			action:	'get_images',
 			userid:	userid
@@ -287,9 +387,18 @@
           return key === false ? res : null;
 	}
 
-
 	load_data()									// this is independent of the key 
 	setInterval(load_data, 10000)							// would best be events, not polling ... Eg. using PubNub	
+
+	get_usage(function(e){$('#credits').text(e)})
+
+	$('#to').on('keyup', function (e) 
+	{
+		if (e.keyCode == 13) 
+		{
+			send_sms();
+    		}
+	});
 
 	$('#send_btn').on('click', send_sms)
 	$('#link_btn').on('click', get_link)
