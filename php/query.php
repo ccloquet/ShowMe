@@ -55,11 +55,18 @@
 			
 			$key    = $_POST['key'];
 			$result = ['result'=>'NOK'];
-			
-			if ( verify_key($key) )	// &  ($userid == get_user_from_key($key) 
+
+			if ( verify_key_and_user($key, $userid) )
 			{
 				$result = ['result'=>'OK'];
 			}
+
+			break;
+
+		case 'get_usage':		// get remaining credits
+
+			$usage  = get_usage($userid);
+			$result = ['result'=>$usage];
 
 			break;
 
@@ -67,7 +74,7 @@
 			// polling for the images names
 
 			// 1. DELETE FILES OLDER THAN 6 hours							// should be a cron
-			$files 	= glob($userid . "/*.{jpg,mp4}", GLOB_BRACE);
+			$files 	= glob(BASE_FOLDER . $userid . "/*.{jpg,mp4}", GLOB_BRACE);
 		  	$now   	= time();
 
 			foreach ($files as $file) 
@@ -82,7 +89,7 @@
 		  	}
 
 			// 2. LIST THE .JPG FILES BY DESCENDING TIME
-			$files 	= glob($userid . "/*.{jpg,mp4}", GLOB_BRACE);
+			$files 	= glob(BASE_FOLDER . $userid . "/*.{jpg,mp4}", GLOB_BRACE);
 			usort($files, create_function('$a,$b', 'return filemtime($b) - filemtime($a);'));	// https://stackoverflow.com/questions/124958/glob-sort-by-date
 
 			// 3. RETURN THE IMAGES
@@ -92,12 +99,14 @@
 			{
 				if (is_file($file)) 
 				{
-					$fname 		= str_replace($userid, '', $file);
+					$fname0		= str_replace(BASE_FOLDER, '', $file);			// filename without base folder
+					$fname 		= str_replace($userid,     '', $fname0);
+
 					$key 		= substr($fname,1, strlen($fname)-31);			// remove extension (3 letters + dot) + random_bytes (26 alphanum)
 				 
-					if (!verify_key($key)) continue;
+					if (!verify_key_and_user($key, $userid)) 	continue;
 
-					$arr[] = ['src'=>$file, 'dt'=>filemtime($file)];
+					$arr[] = ['src'=>$fname0, 'dt'=>filemtime($file)];
 				}
 		  	}
 		

@@ -9,28 +9,50 @@
 
 	// destination number check
 	// should be in international format, without leading '+' or '00'
-	if (!isset($_POST['to']))  		returns_error();
-	if (!ctype_digit($_POST['to']))		returns_error();
+	if (!isset($_POST['to']))  					returns_error();
+	if (!ctype_digit($_POST['to']))					returns_error();
 
 	// checks that the userid is legitimate
-	if (!isset($_POST['userid'])) 		returns_error();
-	if (!validate_user($_POST['userid']))	returns_error();
+	if (!isset($_POST['userid'])) 					returns_error();
+	if (!validate_user($_POST['userid']))				returns_error();
 
 	// check that the key is legitimate 
-	// (ie, that the key comes from a legitimate user, within the correct timeframe)	--should check it comes from the userid
-	if (!isset($_POST['key'])) 		returns_error();
-	if (!verify_key($_POST['key'])) 	returns_error();
-
+	// (ie, that the key comes from a legitimate user, within the correct timeframe)
+	if (!isset($_POST['key'])) 					returns_error();
+	if (!verify_key_and_user($_POST['key'], $_POST['userid'])) 	returns_error();
 
 	$to   		= '+' . $_POST['to'];
 	$key  		= $_POST['key'];	 
 	$userid 	= $_POST['userid']; 
 	$sms_apikey 	= $params[$userid]['sms_apikey'];
 
+	$usage 		= get_usage($userid);
+
+	if ($usage <= 0)
+	{
+		die(json_encode(['result'=>'NOCREDIT']));
+	}
+
 	// no other choice for the body => limits abuse
 	$body 		= 'Open the link to take a picture. Ouvrez le lien pour prendre une photo. Open de link om een foto te nemen. ' . BASE_URL . '?key=' . $key;
 
-	send_clickatell($sms_apikey, $body, $to); 
+	$ret 		= send_clickatell($sms_apikey, $body, $to);
+	$ret=true;
+
+	if ($ret !== false)
+	{
+		set_usage($userid, -1);
+		$usage = get_usage($userid);					// query again because several people may be busy with the same account
+		die(json_encode(['result'=>'OK', 'credits'=>$usage]));
+	}
+	else
+	{
+		$usage = get_usage($userid);					// query again because several people may be busy with the same account
+		die(json_encode(['result'=>'ERROR', 'credits'=>$usage]));
+	}
+	
+
+	// should echo remaining credits ($usage - 1)
 
 	function send_clickatell($sms_apikey, $body, $to) // only returns the result of the first one
 	{
@@ -49,9 +71,17 @@
 		$ret 			= curl_exec($ch);
 		curl_close($ch);
 
-		echo $ret;
-		//$ret     = json_decode($ret, true);
-		//if ($ret['messages'][0]['accepted'] != true) 	return false;
+		if ($ret === false)
+		{
+			return false;
+		}				
+		$ret    		= json_decode($ret, true);
+
+		if ($ret['messages'][0]['accepted'] !== true) 	
+		{
+			return false;
+		}
 	}
+
 
 ?>
