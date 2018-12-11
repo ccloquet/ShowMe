@@ -9,9 +9,9 @@
     if (!isset($_POST['key'])) {
         returns_error();
     }
-    /*if (!verify_key($_GET['key'])) {
+    if (!verify_key($_POST['key'])) {
         returns_error();
-    }*/
+    }
    
     switch($_POST['action']) {
 
