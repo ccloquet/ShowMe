@@ -3,7 +3,7 @@
 	define('TWILIO_SID', '');
 	define('TWILIO_APIKEY', '');
 
-	define('BASE_URL', 		'https://****/received/showme.html');		// URL OF THE CLIENT PAGE
+	define('BASE_URL', 		'https://****/html/showme.html');		// URL OF THE CLIENT PAGE
 
 	define('BASE_FOLDER', 		'../received/');				// FOLDER WHERE THE IMAGES ARE STORED
 	define('USAGE_FOLDER', 		'../db/');					// FOLDER WHERE THE USAGE DATA ARE STORED

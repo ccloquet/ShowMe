@@ -342,8 +342,11 @@
 				// security measures :
 				// the key should be valid (a-z0-9_) => not possible to insert code through this mechanism
 				// only allowed extensions are possible
+				
+				// look for the last '/' in order to isolate the key part (remove the path)
+				var j=0, j0=-1; while (j>=0) {j0=j; j=src.indexOf('/', j0+1);}
 
-				if (!validate_key(src.substr(0, src.length-4))) 	continue;
+				if (!validate_key(src.substr(j0+1, src.length-4-j0-1))) 	continue;
 
 				switch (src.substr(src.length-4))
 				{

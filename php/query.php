@@ -106,7 +106,7 @@
 				 
 					if (!verify_key_and_user($key, $userid)) 	continue;
 
-					$arr[] = ['src'=>$fname0, 'dt'=>filemtime($file)];
+					$arr[] = ['src'=>$file, 'dt'=>filemtime($file)];
 				}
 		  	}
 		

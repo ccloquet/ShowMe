@@ -1,0 +1,55 @@
+	/* ---------------- REFERRAL PROGRAM */
+	/*#tellafriend:hover
+	{
+		color:white;
+	}
+	#tellafriend-div
+	{
+		display:none
+	}
+
+	#tellafriend-div input
+	{
+		border: none;
+		background: transparent;
+		border-bottom: 1px solid black;
+	}
+	.refer-button
+	{
+		border:1px solid black;
+		padding:3px;
+	}*/
+	/* ---------------- END REFERRAL PROGRAM */
+
+
+	<!-- ---------------- REFERRAL PROGRAM -->
+	<!--span id='tellafriend'>tell a friend&nbsp;<i class='fa fa-bullhorn'></i></span-->
+	<!-- ---------------- END REFERRAL PROGRAM -->
+
+
+
+	<!-- ---------------- REFERRAL PROGRAM -->
+	<!--div id="tellafriend-div" style="position:fixed;top:70px;right:20px;width:250px;height: 250px;background: #90c9c3;padding: 20px 0;font-size: larger;border-radius: 5px;color: #292d3c;border: 3px solid white;">
+	Tell a friend and get 5 credits free when he/she logs in
+	<div style="line-height:2em;margin: 1.5em 0em .5em 0;">
+		<input id='name0'  placeholder="your name"><br>
+		<input id='email0' placeholder="your email"><br>
+		<input id='name1'  placeholder="your friend's name"><br>
+		<input id='email1' placeholder="your friend's email">
+	</div>
+
+	<div style="font-size:75%;padding:0 2em;margin-bottom: 1.5em;"> No SPAM. Your data will only be used to send this email and for reward attribution.</div>
+    
+	<span class='refer-button' id='refer-cancel'>Cancel</span> <span  class='refer-button'>OK</span>
+	</div-->
+	<!-- ---------------- END REFERRAL PROGRAM -->
+
+	/* ---------------- REFERRAL PROGRAM -- */
+	//$('#tellafriend').on('mouseover',    	function(){$('#tellafriend-div').show()})
+	//$('#refer-cancel').on('click', 	function(){$('#tellafriend-div').hide()})
+	/* ---------------- END REFERRAL PROGRAM -- */
+
+
+	When someone push on OK
+	-> send email from the server
+	-> registers

@@ -83,6 +83,11 @@
     }
 
     // create the folder if does not exists
+    if (!is_dir(BASE_FOLDER))						
+    {
+	mkdir(BASE_FOLDER, 0777, true);
+    }
+
     if (!file_exists(BASE_FOLDER . '/' . $userid)) {
         mkdir(BASE_FOLDER . '/' . $userid, 0777, true);
     }
