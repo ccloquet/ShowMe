@@ -48,7 +48,9 @@ If you are looking for a more complete solution for dispatchings, a project like
   - __peerjs_url__: fully qualified domain name of your PeerJS server without preceding https and without trailing '/' (eg : mypeerjs-server.example.com, but not https://mypeerjs-server.example.com/)
 
 - in config/params.php: 
-  - __TWILIO_SID__ & __TWILIO_APIKEY__ are the Twilio credentials to het the STUN (free) and TURN (paying) servers 
+  - __TWILIO_SID__ & __TWILIO_APIKEY__ are the Twilio credentials to het the STUN (free) and TURN (paying) servers, and optionally to access their SMS API if chosen below
+  - __TWILIO_FROM__ is the originating SMS number
+  - __SMS_API__ = {'TWILIO'|'CLICKATELL'}: which API to choose
   - __BASE_URL__ should be set to the page the citizen will see (https://.../html/showme.html)
   - __$params__ contains the userids, usernames, secrets and API key for the SMS API -> in the future, this might move to a database
   - __BASE_FOLDER__ points to the folder where the received images will be collected. This folder will be created automatically at runtime
@@ -60,6 +62,7 @@ If you are looking for a more complete solution for dispatchings, a project like
 **Troubleshooting**
 - P2P webRTC connexions might be unstable. See eg: https://peerjs.com/docs/#api
 - It may **fail behind a firewall** (a TURN server is configured, but port blocking / adress blocking might still be an issue)
+- According to the cases, one SMS provider might be more reliant / performant than the other. We have good experiences with Twilio.
 
 **How does the security part works**
 - Each organization gets a userid
