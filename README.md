@@ -36,6 +36,12 @@ If you are looking for a more complete solution for dispatchings, a project like
 - for real world use cases, a STUN & a TURN server is needed. This example uses Twilio's. See eg: https://peerjs.com/docs/#api, https://www.avaya.com/blogs/archives/2014/08/understanding-webrtc-media-connections-ice-stun-and-turn.html &  https://www.html5rocks.com/en/tutorials/webrtc/infrastructure, https://www.twilio.com/stun-turn. STUN Server usage is free, but TURN is not.
 - An account on a SMS provider is needed. Clickatell has been temporarily chosen.
 
+**Structure**
+ - /html : html5 apps for the PSAP & the citizen
+ - /php : user facing scripts
+ - /config : php config
+ - /src : php libraries
+
 **Configuration**
 - in html/params.js: 
   - __client_path__: should be set to the path of the upload API (normally, ending with /php/)
@@ -43,12 +49,13 @@ If you are looking for a more complete solution for dispatchings, a project like
 
 - in config/params.php: 
   - __TWILIO_SID__ & __TWILIO_APIKEY__ are the Twilio credentials to het the STUN (free) and TURN (paying) servers 
-  - __BASE_URL__ should be set to the page the citizen will see (https://.../html/index.html)
+  - __BASE_URL__ should be set to the page the citizen will see (https://.../html/showme.html)
   - __$params__ contains the userids, usernames, secrets and API key for the SMS API -> in the future, this might move to a database
-
-- in received/params.js:
-  - __base_url__: should be set to the page the citizen will see (html/index.html)
-  - __peerjs_url__: fully qualified domain name of your PeerJS server without preceding https and without trailing '/'  
+  - __BASE_FOLDER__ points to the folder where the received images will be collected. This folder will be created automatically at runtime
+  - __USAGE_FOLDER__ points to the folder where the usage & credit data  will be stored. This folder will be created automatically at runtime
+  - __INITIAL_TOPUP__ defines how many free credits someone receives when using the service the first time
+  - the __$params__ array contains an array of [USERID =>	['secret'=> SECRETTKEY, 'name'=> USERNAME, 	'sms_apikey' => CLICKATELL_APIKEY],
+ 
 
 **Troubleshooting**
 - P2P webRTC connexions might be unstable. See eg: https://peerjs.com/docs/#api
@@ -56,7 +63,7 @@ If you are looking for a more complete solution for dispatchings, a project like
 
 **How does the security part works**
 - Each organization gets a userid
-- The user opens https://***/received/index.html?userid=USERID
+- The user opens https://***/html/index.html?userid=USERID
 - This queries the API (query.php), which returns a key
 - This key is composed of a timestamp, a random hash and a validation hash
 - The validation hash takes into account the timestamp, the random hash and a user-related secret
@@ -68,8 +75,6 @@ If you are looking for a more complete solution for dispatchings, a project like
 - Ideally, the secret should change periodically, so that if an attacker finds it, it would not be useful for a long time
 
 We could also think to a password, but this would be to the detriment of the UX, is it worth here ?
-
--> Does all this make sense ?
 
 **Note**
 - the capture API is still used as the capture from the stream is not (yet?) available eg. on iOS. For it to work, when a user clicks on the camera button, the stream is interrupted. It is resumed when the user clicks on the video, or automatically after the sending of the picture
