@@ -30,11 +30,14 @@
 
 	if ($usage <= 0)
 	{
+		log_attempt(date('Ymd').'.log', 'SMS_NOCREDIT');
 		die(json_encode(['result'=>'NOCREDIT']));
 	}
 
+	log_attempt(date('Ymd').'.log', 'SMS');
+
 	// no other choice for the body => limits abuse
-	$body 		= 'Open the link to take a picture. Ouvrez le lien pour prendre une photo. Open de link om een foto te nemen. ' . BASE_URL . '?key=' . $key;
+	$body 		= 'Open the link to send a video. Ouvrez le lien pour envoyer une vidéo. Open de link om een video te sturen. ' . BASE_URL . '?key=' . $key ;
 
 	switch(SMS_API)
 	{

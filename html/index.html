@@ -33,7 +33,9 @@
 
 </style>
 
-
+<!-- Start of my-poppy Zendesk Widget script -->
+<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=b281006c-5df8-4a99-a23f-b5100864db90"> </script>
+<!-- End of my-poppy Zendesk Widget script -->
 
 </head>
 <body>
@@ -62,7 +64,7 @@
 <div id='live'   class='flex_display'></div> 
 <div id='photos' class='flex_display'></div>
 
-<div style='background:#209387; color:black; position:fixed; bottom:0px;left:0; width:100%; padding-bottom:0; text-align:center;font-size:12px'>&copy; <a href='mailto:info@my-poppy.eu'>info@my-poppy.eu</a> & GitHub project contributors - <a href='https://github.com/ccloquet/showme' target='_blank'>github.com/ccloquet/showme</a> - MIT Licence</center>
+<div style='background:#209387; color:black; position:fixed; bottom:0px;left:0; width:100%; padding-bottom:0; text-align:center;font-size:12px'>&copy; <a href='mailto:info@my-poppy.eu'>info@my-poppy.eu</a> & <a href='https://github.com/ccloquet/showme' target='_blank'>GitHub project</a> contributors - MIT Licence. <b>Privacy:</b> in this beta version, we collect IP adress & browser identification & usage data, and store them max. 1 year to enhance this app & adapt our offer.<br>The static images are retained up to 6 hours for operational use. The videos are never stored. Check our <a href='https://docs.my-poppy.eu/privacy_poppy.html'>privacy policy</a> or mail us at <a href='mailto:privacy@my-poppy.eu'>privacy@my-poppy.eu</a>.</div>
 
 <div class='center-div' id='error_box' style='display:none'></div>
 
@@ -72,7 +74,7 @@
 <script	src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.18/peer.min.js"></script>
 <script src='params.js?a=2'></script>
-<script src='showme.js'></script>
+<script src='showme.js?a=2'></script>
 <script>
 	var query_string = getQueryString();
 	var userid 	 = query_string["userid"];
@@ -117,7 +119,7 @@
 				var ice_servers = e.ice_servers				 
 				var mypeerid    = key + '-0'	// full key => verification possible before answering the call
 
-				$('#live').append('<div><video style="border-radius:10px; margin:0 10px" height="360" id="video-'+mypeerid+'" autoplay></video></div>')
+				$('#live').append('<div><video style="border-radius:10px; margin:0 10px" height="360" id="video-'+mypeerid+'" autoplay muted="muted"></video></div>')
 
 				peerids.push(mypeerid)
 				peers.push(new Peer(mypeerid, {config: {iceServers: ice_servers}, host: peerjs_url, debug: 3, port: 443, secure: true}));
@@ -207,11 +209,11 @@
 	}
 	function send_sms()
 	{
+		sending_status_show('sending');
+
 		get_key(
 		function(base_url, key)
 		{
-			sending_status_show('sending');
-
 			$.post(
 			send_sms_php,
 			{

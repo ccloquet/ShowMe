@@ -36,6 +36,10 @@
 			$ret    = json_decode($ret, true);
 			$result = $ret["ice_servers"];
 		}
+		else
+		{
+			returns_error();
+		}
 		break;
   	default: 
 		returns_error();

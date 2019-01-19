@@ -20,6 +20,8 @@
 
 	$result = [];
 
+	if ($_POST['action'] !== 'get_images') log_attempt(date('Ymd').'.log', $_POST['action']);
+
 	switch($_POST['action'])
 	{
 		case 'init':
@@ -47,7 +49,9 @@
 				$ret    	= json_decode($ret, true);
 		    		$ice_servers 	= $ret["ice_servers"];
 			}
- 
+
+			file_get_contents(EMAIL_WEBHOOK . '?value1=GRANTED');
+
 			$result = ['key'=>$key, 'ice_servers' => $ice_servers, 'base_url'=>BASE_URL];
 			break;
 

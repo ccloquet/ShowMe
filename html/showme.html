@@ -18,35 +18,48 @@
 			border: 3px solid red;
 			border-radius: 10px;
 		}
+
+		.blink_me 
+		{
+			animation: blinker 3s ease infinite;
+		}
+
+		@keyframes blinker 
+		{
+		  50% { opacity: 0;  }
+		}
 	</style>
 
 	<script	src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.18/peer.min.js"></script>
-	<script src="showme.js"></script>
+	<script src="showme.js?a=2"></script>
 </head>
 <body>
 	<center>
-
-	<br>DEMO ONLY - NOT FOR REAL USE<br>
-	<br><video height="175" autoplay id="video-0"></video><br> <!-- VIDEO ELEMENT FOR WEBRTC -->
-	<input style="font-size:300%; margin-top:.25em; padding:.5em; border-radius:20px" type="button" id="loadFileXml" value="📷" onclick="document.getElementById('fileinput').click();" />
-	<input type="file" accept="image/*" style="display:none;" id="fileinput" name="fileinput" capture="environment"/>
-	<br><br>
-	<div id='txt'></div>
+	<div style='margin:2em '>DEMO ONLY - NOT FOR REAL USE</div>
+	<video height="250" autoplay muted="muted" id="video-0"></video><br> <!-- VIDEO ELEMENT FOR WEBRTC -->
+	<div id='red_dot' class='blink_me' style='position:fixed; top:3.7em; right:2em; font-size:3em;margin-top:-2em;color:red;display:none'>&#9679;</div>
+	<div style='position:fixed; bottom:15px; left:0; right:0'>
+		<input style="font-size:300%; margin-top:.25em; padding:.5em; border-radius:20px" type="button" id="loadFileXml" value="📷" onclick="document.getElementById('fileinput').click();" />
+		<input type="file" accept="image/*" style="display:none;" id="fileinput" name="fileinput" capture="environment"/>
+		<br><br>
+		<div id='txt'></div>
+	</div>
 	</center>
 	<script src='params.js?a=2'></script>
 	<script>
-	var query_string = getQueryString();
-	var key 	 = query_string["key"];
-	var txt          = document.getElementById('txt');
+	var query_string 	= getQueryString();
+	var key 	 	= query_string["key"];
+	var txt          	= document.getElementById('txt');
 
-	var lang             = {}
+	var lang             	= {}
 
-	lang.press           = '<br>Press if you want to take a photo<br>Appuyez si vous voulez prendre une photo<br>Druk ans u een een foto wilt nemen'
-	lang.being_sent      = '<br>⏳ Your photo is being sent<br>⏳ Votre photo est en cours d\'envoi<br>⏳ Uw foto wordt gestuurd'
-	lang.has_been_sent   = '<br>✓ Your photo has been sent<br>✓ Votre photo a été envoyée<br>✓ Uw foto werd gestuurd'
+	lang.press           	= '<br>Press if you want to take a photo<br>Appuyez si vous voulez prendre une photo<br>Druk ans u een een foto wilt nemen'
+	lang.being_sent      	= '<br>⏳ Your photo is being sent<br>⏳ Votre photo est en cours d\'envoi<br>⏳ Uw foto wordt gestuurd'
+	lang.has_been_sent   	= '<br>✓ Your photo has been sent<br>✓ Votre photo a été envoyée<br>✓ Uw foto werd gestuurd'
+	lang.has_not_been_sent 	= '<br>✓ Your photo has not been sent<br>✓ Votre photo n\'a pas été envoyée<br>✓ Uw foto werd niet gestuurd'
 	
-	txt.innerHTML        = lang.press
+	txt.innerHTML        	= lang.press
 
 	document.getElementById('fileinput').addEventListener('change', function()
 	{
@@ -68,10 +81,14 @@
 			{
 				// Every thing ok, file uploaded
 				//alert(xhr.responseText); // handle response.
-				txt.innerHTML = lang.has_been_sent
-				setTimeout(function(){location.reload()}, 1000)
-				return;
+				txt.innerHTML = lang.has_been_sent;
 			}
+			else
+			{
+				txt.innerHTML = lang.has_not_been_sent;
+			}
+			setTimeout(function(){location.reload()}, 1000)
+			return;
 		};
 		fd.append("upload_file", file);
 	   	xhr.send(fd);
@@ -130,11 +147,13 @@
 				console.log(peer)
 
 				video.classList.remove("streaming_on")
+				$('#red_dot').hide()
 
 				peer.on('open',  function(id)  
 				{
 					console.log('My peer ID is: ' + id); 
 					video.classList.add("streaming_on")
+					$('#red_dot').show()
 				});
 
 				peer.on('error', function(err) 

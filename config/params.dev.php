@@ -1,5 +1,7 @@
 <?php
 
+	define('EMAIL_WEBHOOK', 	'');						// for reporting	
+
 	define('TWILIO_SID', 		'');						// Twilio : for TURN & STUN servers (always) & for SMS API (if you choose to use TWILIO below)
 	define('TWILIO_APIKEY', 	'');
 	define('TWILIO_FROM', 		'');						// might be on a customer basis, in the table below. Begins with a "+" and the country code
