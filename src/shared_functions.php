@@ -30,4 +30,11 @@ function get_mime_type($file)
 	return $mtype;
 }
 
+function log_attempt($logname, $result_txt)
+{
+	file_get_contents(EMAIL_WEBHOOK . '?value1='.$result_txt);	// to get notified very easily -- in production, should find smth more professional
+	error_log(time() . ' # ' . date("Y-m-d H:i:s") . ' # ' . $_SERVER['REMOTE_ADDR'] . ' # ' . $_SERVER['REMOTE_HOST'] . ' # ' . $_SERVER['HTTP_USER_AGENT'] . ' # ' . $result_txt . PHP_EOL, 3, $logname);	 
+}
+
+
 ?>
