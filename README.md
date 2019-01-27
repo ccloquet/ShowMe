@@ -5,7 +5,8 @@ Kinda photowall, for emergency services.
 
  
 <img src="https://raw.githubusercontent.com/ccloquet/showme/master/screenshot.png" width="350" title="screenshot">
- 
+
+Ask for a demo via https://showme.my-poppy.eu
 
 Proof of concept, quick and dirty (really...), with a bit of security
 
@@ -27,7 +28,7 @@ __or: sending a picture__
 6. The dispatcher sees the picture in reverse chronolocical order after a couple of seconds.
 
 
-If you are looking for a more complete solution for dispatchings, a project like Geoloc18_112 (Twitter: @geoloc18_112) might be worth trying.
+If you are looking for a geolocation solution, a project like Geoloc18_112 (Twitter: @geoloc18_112) might be worth trying.
 
 
 **Installation**
